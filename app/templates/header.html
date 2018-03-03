@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='imgs/favicon.png') }}">
+
+    <title>I need my meds</title>
+
+    <!-- Custom Fonts -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+    <!-- Theme CSS -->
+    <link href="/static/css/normalize.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <div class="wrap">
+
+        <nav class="navbar">
+            <a class="navbar-brand" href="/">
+                <span class="navbar-logo"></span>
+                <span class="navbar-title">I need my meds</span>
+            </a>
+            <a href="{{ url_for('login') }}" class="menu signup">Log In</a>
+        </nav>
+
+
+{% block content %}{% endblock %}
