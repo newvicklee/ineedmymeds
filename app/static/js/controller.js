@@ -15,6 +15,11 @@
         self.view = view;
 
 
+	self.view.bind('showPharmacies', function(medName) {
+            self.showPharmacies(medName);
+        });
+
+
 
     }
 
@@ -23,6 +28,11 @@
         //this.view.render('patientList');
     };
 
+    Controller.prototype.showPharmacies = function(medName) {
+        self.model.searchMed(medName, function(pharmacyList) {
+            self.view.render('showPharmacies', pharmacyList);
+        });
+    };
 
     Controller.prototype.searchList = function(searchPattern) {
         var self = this;

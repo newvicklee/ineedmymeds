@@ -17,9 +17,8 @@
         this.helper = helper;
 
 
-        if($('head').hasClass('patient-view')) {
-            this.patientListTemplate = Handlebars.compile($('#template-patientlist').html());
-            this.showSelectedPatientTemplate = Handlebars.compile($('#template-showSelectedPatient').html());
+        if($('head').hasClass('client-view')) {
+            this.showPharmaciesTemplate = Handlebars.compile($('#template-showPharmacies').html());
         };
 
 
@@ -37,6 +36,7 @@
 
 	var viewCommands = {
 
+            /*
             patientList: function() {
                 var patientList = self.model.read();
                 if(self.patientListTemplate) {
@@ -49,11 +49,10 @@
                     $('#patient-list').html(self.patientListTemplate(data));
                 };
             },
-
-            showSelectedPatient: function() {
-                var selectedPatientInfo = data;
-                $('#show-selected-patient').html(self.showSelectedPatientTemplate(selectedPatientInfo));
-                self.render('showLabChart', selectedPatientInfo);
+            */
+            showPharmacies: function() {
+                let pharmaciesData = data;
+                $('#show-pharmacies').html(self.showPharmaciesTemplate(pharmaciesData));
             },
 
 
@@ -66,7 +65,7 @@
     View.prototype.bind = function(event, handler, extraParameter) {
         var self = this;
 
-
+        /*
         if (event === 'searchList') {
             $('#search-patient').keypress(function(event) {
                 var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -74,20 +73,13 @@
                 handler(searchPattern);
             });
         };
+        */
 
-        if (event === 'showSelectedPatient') {
+        if (event === 'showPharmacies') {
 
-            $('#patient-list, #patientname-list').on('click', '.patient-name-tag', function(el) {
-                var phn = el.target.id;
-                var patientNameList = self.model.dataPatientList;
-                var selectedPatientPhn = '';
-
-                for (var i = 0; i < patientNameList.length; i++) {
-                    if (parseInt(patientNameList[i].phn) === parseInt(phn)) {
-                        selectedPatientPhn = patientNameList[i].phn;
-                    };
-                };
-                handler(selectedPatientPhn);
+            $('#show-pharmacies-button').on('click', function(el) {
+                let medName = $('#search-med').val();
+                handler(medName);
             });
         };
 

@@ -241,7 +241,7 @@ nav {
 
 
     @include susy-breakpoint($tablet, 12) {
-        @include span(8 of 12);
+        @include span(6 of 12);
     }
 
 }
@@ -396,7 +396,7 @@ nav {
     }
 }
 
-.card-last-block {
+.card-block-section {
     display: inline-block;
     text-align: center;
     vertical-align: top;
@@ -1328,4 +1328,27 @@ box-sizing: border-box;
     vertical-align: top;
     position: relative;
     height: 100%;
+    padding-left: 250px;
+}
+
+.rating-number {
+    pointer: cursor;
+    padding-top: 65px;
+}
+
+.btn-blue {
+    border-radius: 6px;
+    background: #196ae5;
+    color: #fff;
+    border-color: #196ae5;
+}
+
+.btn-center {
+    margin: 0 auto;
+    display: block;
+}
+
+.btn-position {
+    padding-top: 20px;
+    padding-left: 90px;
 }

@@ -179,7 +179,7 @@ nav {
       margin-right: 2.5641%; } }
   @media (min-width: 600px) {
     .card-body {
-      width: 66.10169%;
+      width: 49.15254%;
       float: left;
       margin-right: 1.69492%; } }
 
@@ -297,13 +297,13 @@ nav {
       .card-cta--buttons .retweet-button {
         display: block; } }
 
-.card-last-block {
+.card-block-section {
   display: inline-block;
   text-align: center;
   vertical-align: top;
   margin-top: 0; }
   @media (max-width: 600px) {
-    .card-last-block {
+    .card-block-section {
       width: 48.71795%;
       float: right;
       margin-right: 0;
@@ -314,12 +314,12 @@ nav {
       height: 165px;
       width: 100px; } }
   @media (min-width: 600px) {
-    .card-last-block {
+    .card-block-section {
       /*width: 120px;*/
       width: 250px;
       height: 180px;
       margin: 0 0 0 16px; } }
-  .card-last-block img {
+  .card-block-section img {
     box-shadow: 0 4px 6px 1px rgba(50, 50, 93, 0.1);
     border-radius: 4px;
     position: relative;
@@ -328,11 +328,11 @@ nav {
     object-fit: cover;
     z-index: 0; }
     @media (max-width: 600px) {
-      .card-last-block img {
+      .card-block-section img {
         height: 100%;
         width: 100%; } }
     @media (min-width: 600px) {
-      .card-last-block img {
+      .card-block-section img {
         width: 100%;
         height: 100%; } }
 
@@ -1011,4 +1011,23 @@ nav {
   display: inline-block;
   vertical-align: top;
   position: relative;
-  height: 100%; }
+  height: 100%;
+  padding-left: 250px; }
+
+.rating-number {
+  pointer: cursor;
+  padding-top: 65px; }
+
+.btn-blue {
+  border-radius: 6px;
+  background: #196ae5;
+  color: #fff;
+  border-color: #196ae5; }
+
+.btn-center {
+  margin: 0 auto;
+  display: block; }
+
+.btn-position {
+  padding-top: 20px;
+  padding-left: 90px; }

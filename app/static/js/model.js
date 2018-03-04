@@ -23,6 +23,22 @@
 
     }
 
+    Model.prototype.searchMed = function(medName, callback) {
+        $.ajax({
+            dataType: "json",
+            url: "/search?drug=" + medName + "&location=vancouver",
+            type: "GET",  
+            contentType: "application/json",
+            data: JSON.stringify({drug: medName}),
+            success: function(successData){    
+                //console.log("Successfully made an ajax call");
+                //console.log(successData.update_msg);
+                callback(successData);
+            },
+            error: function(error) {
+            }
+        });
+
 
 
 
