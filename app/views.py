@@ -2,13 +2,47 @@ from flask import render_template, flash, abort, redirect, session, url_for, req
 from app import app
 
 
+
+pharmacy1 = {
+        'pharmacy-id': 12345,
+        'pharmacy-name': 'Shoppers Drug Mart #0',
+        'pharmacy-address': '123 Main St',
+        'pharmacy-phone': '604-111-1111'
+        }
+
+pharmacy2 = {
+        'pharmacy-id': 12345,
+        'pharmacy-name': 'Shoppers Drug Mart #0',
+        'pharmacy-address': '123 Main St',
+        'pharmacy-phone': '604-111-1111'
+        }
+"""
 search_stub = {
     'drug-id': 5,
     'other-drugs': [  { 'id': 2, 'name': 'other' }, {'id':3, 'name': 'yet another'} ],
-    'pharmacies': [ 5, 2, 9 ],
     'known': True
 }
 
+"""
+search_stub = {
+    'drug-id': 5,
+    'other-drugs': [  { 'id': 2, 'name': 'other' }, {'id':3, 'name': 'yet another'} ],
+    'pharmacies': [
+        { 
+            'pharmacy_id': 12345,
+            'pharmacy_name': 'Shoppers Drug Mart #0',
+            'pharmacy_address': '123 Main St',
+            'pharmacy_phone': '604-111-1111'
+        },
+        { 
+            'pharmacy_id': 12345,
+            'pharmacy_name': 'Shoppers Drug Mart #0',
+            'pharmacy_address': '123 Main St',
+            'pharmacy_phone': '604-111-1111'
+        },
+        ],
+    'known': True
+}
 availability_stub = {
     'probability': 70,
     'last_seen_date': 1520107909,

@@ -26,7 +26,7 @@
     Model.prototype.searchMed = function(medName, callback) {
         $.ajax({
             dataType: "json",
-            url: "/search?drug=" + medName + "&location=vancouver",
+            url: "/api/v1/search",
             type: "GET",  
             contentType: "application/json",
             data: JSON.stringify({drug: medName}),
@@ -38,6 +38,7 @@
             error: function(error) {
             }
         });
+    };
 
 
 

@@ -29,6 +29,7 @@
     };
 
     Controller.prototype.showPharmacies = function(medName) {
+        let self = this;
         self.model.searchMed(medName, function(pharmacyList) {
             self.view.render('showPharmacies', pharmacyList);
         });
