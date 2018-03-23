@@ -29,13 +29,6 @@ def close_connection(exception):
         db.close()
 
         
-pharmacy_info_stub = {
-    'name': 'Super Drugs',
-    'address': 'Hastings on Hudson',
-    'phone-number': 'Hastings on Hudson',
-    'drugs': [ 5, 8, 11, 12 ]
-}
-
 drug_stub = {
     'name': 'Happy Pill',
     'last_requested': 1520107909
@@ -180,11 +173,11 @@ ORDER BY when_reported""", (pharma_id,drug_id))
         'last_seen_by_pharmacist': last_seen_by_pharmacist }
     )
 
-@app.route('/api/v1/drug/<int:drug_id>/at/<int:pharmacy_id>/available', methods=['POST'])
-def set_available(drug_id, pharmacy_id):
-    by_pharmacist = request.args.get('by-pharmacist')
+@app.route('/api/v1/drug/<int:drug_id>/at/<int:pharma_id>/available', methods=['POST'])
+def set_available(drug_id, pharma_id):
+    by_pharmacist = request.args.get('by-pharmacist') or 0
     # get POST
-    availability = request.get_data()
+    availability = 1 if '1' in str(request.get_data()) else '0'
 
     # get DB
     db = get_db()
@@ -192,7 +185,7 @@ def set_available(drug_id, pharmacy_id):
 
     # set availability
     now = now_int()
-    cur.execute('INSERT INTO Availabilities VALUES(?,?,?,?)', (pharma_id, drug_id, availability, now, by_pharmacist))
+    cur.execute('INSERT INTO Availabilities VALUES(?,?,?,?,?)', (pharma_id, drug_id, availability, now, by_pharmacist))
     db.commit()
     
     return ""
@@ -201,28 +194,116 @@ def set_available(drug_id, pharmacy_id):
 def drug_onboarding():
     if not request.json or not 'name' in request.json:
         abort(400)
-    #TODO drug on-boarding
-    return "5"
+    # get DB
+    db = get_db()
+    cur = db.cursor()
+    
+    # drug on-boarding
+    doc = json.dumps({
+        'name': base_name,
+    })
+    cur.execute('INSERT INTO DrugDoc VALUES(?)', (doc,))
+    drug_id = cur.lastrowid
+
+    # character 3-grams
+    no_spaces = re.sub('\\s+', '', base_name)
+    for idx in range(len(no_spaces)-2):
+        trigram = no_spaces[idx:(idx+3)]
+        cur.execute('INSERT INTO DrugNameParts VALUES(?,?)', (trigram, drug_id))
+    db.commit()
+    
+    return str(drug_id)
 
 @app.route('/api/v1/pharmacy', methods=['POST'])
 def pharmacy_onboarding():
-    if not request.json or not 'name' in request.json:
+    if not request.json or not 'name' in request.json or \
+        not 'address' in request.json or not 'phone' in request.json or \
+        not 'lat' in request.json or not 'long' in request.json:
         abort(400)
-    #TODO pharmacy on-boarding
-    return "5"
+    
+    # get DB
+    db = get_db()
+    cur = db.cursor()
+    
+    # pharmacy on-boarding
+    doc = json.dumps({
+        'name': request.json['name'],
+        'address': request.json['address'],
+        'lat': request.json['lat'],
+        'long': request.json['long'],
+        'phone': request.json['phone']
+    })
+                    
+    cur = tgt_conn.cursor()
+    cur.execute('INSERT INTO PharmaDoc VALUES(?)', (doc,))
+    pharma_id = cur.lastrowid
 
-@app.route('/api/v1/pharmacy/<int:pharmacy_id>', methods=['GET'])
-def pharmacy_info(pharmacy_id):
-    #TODO get pharmacy info
-    return jsonify(pharmacy_info_stub)
+    cur.execute('INSERT INTO PharmaLoc VALUES(?,?,?)', (pharma_id,float(request.json['lat']),float(request.json['long'])))
+    db.commit()
+    
+    return str(pharma_id)
+
+@app.route('/api/v1/pharmacy/<int:pharma_id>', methods=['GET'])
+def pharmacy_info(pharma_id):
+    # get DB
+    db = get_db()
+    cur = db.cursor()
+    
+    # get pharmacy info
+    doc = json.loads(cur.execute(
+        'SELECT doc FROM PharmaDoc WHERE oid = ?', (pharma_id,)).fetchone()[0])
+    doc['id'] = pharma_id
+
+    # get drug availability
+    cur.execute(
+    """SELECT drug_id 
+FROM Availabilities 
+WHERE pharma_id = ?
+AND availability = 1
+ORDER BY when_reported
+LIMIT 20""", (pharma_id,))
+    drugs = list()
+    for row in cur:
+        drugs.append(row[0])
+    doc['drugs'] = drugs
+    
+    return jsonify(doc)
 
 @app.route('/api/v1/drug/<int:drug_id>', methods=['GET'])
 def get_drug(drug_id):
-    #TODO get name of drug for id
-    return jsonify(drug_stub)
+    # get DB
+    db = get_db()
+    cur = db.cursor()
+    
+    # get name of drug for id
+    row = cur.execute(
+    """SELECT name, when_requested
+FROM DrugNames
+INNER JOIN DrugRequests ON DrugNames.drug_id = DrugRequests.drug_id
+WHERE DrugNames.drug_id = ?
+ORDER BY when_requested
+LIMIT 1""", (drug_id,)).fetchone()
+    
+    return jsonify({
+        'name': row[0],
+        'last_requested': row[1]
+    })
 
 @app.route('/api/v1/drug/requested', methods=['GET'])
 def drugs_requested():
-    #TODO get recently requested drugs
-    return jsonify([ 5, 7, 11, 12 ])
+    # get DB
+    db = get_db()
+    cur = db.cursor()
+    
+    # get recently requested drugs
+    cur.execute(
+    """SELECT DISTINCT drug_id
+FROM DrugRequests
+ORDER BY when_requested
+LIMIT 30""")
+    result = list()
+    for row in cur:
+        result.append(row[0])
+    return jsonify(result)
+
 

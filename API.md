@@ -39,7 +39,9 @@ JSON object with fields:
 
 * name
 * address
-* phone number
+* phone
+* lat
+* long
 
 returns Int (pharmacy-id)
 
@@ -48,7 +50,6 @@ returns Int (pharmacy-id)
 JSON object with fields:
 
 * name: string
-* last_requested: seconds from epoch, UTC-0
 
 returns Int (drug-id)
 
@@ -60,7 +61,7 @@ return JSON object with fields:
 
 * name
 * address
-* phone number
+* phone
 * drugs: [ array of <Int (drug-id)> ]
 
 ## drugs
@@ -70,6 +71,7 @@ return JSON object with fields:
 return JSON object with fields:
 
 * name
+* last_requested
 
 `GET /drug/requested`
 
