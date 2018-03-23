@@ -2,7 +2,7 @@
 
 Open Data BC Hackathon 2018 Project. Helps crowdsource information relative to medication shortages.
 
-More info, see the [wiki](https://github.com/newvicklee/ineedmymeds/wiki),
+More info, see the [API](API.md).
 
 ## Why this is needed?
 

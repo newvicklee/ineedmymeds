@@ -29,31 +29,6 @@ def close_connection(exception):
         db.close()
 
         
-search_stub = {
-    'drug-id': 5,
-    'other-drugs': [  { 'id': 2, 'name': 'other' }, {'id':3, 'name': 'yet another'} ],
-    'pharmacies': [
-        { 
-            'id': 12345,
-            'name': 'Shoppers Drug Mart #0',
-            'address': '123 Main St',
-            'phone': '604-111-1111'
-        },
-        { 
-            'id': 12345,
-            'name': 'Shoppers Drug Mart #0',
-            'address': '123 Main St',
-            'phone': '604-111-1111'
-        },
-        ],
-    'known': True
-}
-availability_stub = {
-    'probability': 70,
-    'last_seen_date': 1520107909,
-    'last_seen_by_pharmacist': 1520107909
-}
-
 pharmacy_info_stub = {
     'name': 'Super Drugs',
     'address': 'Hastings on Hudson',
@@ -167,14 +142,59 @@ ORDER BY when_reported""", (pharma_id,drug_id))
 
 @app.route('/api/v1/drug/<int:drug_id>/at/<int:pharmacy_id>/available', methods=['GET'])
 def is_available(drug_id, pharmacy_id):
-    #TODO compute availability
-    return jsonify(search_stub)
+    # get DB
+    db = get_db()
+    cur = db.cursor()
+    cur.execute(
+    """SELECT availability, when_reported, by_pharmacist 
+FROM Availabilities 
+WHERE pharma_id = ?
+AND drug_id = ?
+ORDER BY when_reported""", (pharma_id,drug_id))
+    probability = None
+    last_seen = None
+    last_seen_by_pharmacist = None
+    #TODO compute availability with a better algo
+    for row in cur:
+        if probability is None:
+            if row[0]:
+                probability = 0.0
+            else:
+                probability = 1.0
+                last_seen = row[1]
+                if row[2]:
+                    last_seen_by_pharmacist = row[1]
+                    break
+        else:
+            if row[0]:
+                if last_seen is None:
+                    probability = (probability + 1.0) / 2.0
+                    last_seen = row[1]
+                if row[2]:
+                    probability = (probability + 1.0) / 2.0
+                    last_seen_by_pharmacist = row[1]
+                    break
+    return jsonify({
+        'probability': probability,
+        'last_seen': last_seen,
+        'last_seen_by_pharmacist': last_seen_by_pharmacist }
+    )
 
 @app.route('/api/v1/drug/<int:drug_id>/at/<int:pharmacy_id>/available', methods=['POST'])
 def set_available(drug_id, pharmacy_id):
-    drug = request.args.get('by-pharmacist')
-    #TODO get POST
-    #TODO set availability    
+    by_pharmacist = request.args.get('by-pharmacist')
+    # get POST
+    availability = request.get_data()
+
+    # get DB
+    db = get_db()
+    cur = db.cursor()
+
+    # set availability
+    now = now_int()
+    cur.execute('INSERT INTO Availabilities VALUES(?,?,?,?)', (pharma_id, drug_id, availability, now, by_pharmacist))
+    db.commit()
+    
     return ""
 
 @app.route('/api/v1/drug', methods=['POST'])
