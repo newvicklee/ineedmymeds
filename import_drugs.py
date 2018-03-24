@@ -5,9 +5,13 @@ import json
 
 
 # Usage:
-# python import_drugs.py /path/to/freemedforms-freedata/master.db (for example /usr/share/freemedforms/datapacks/appinstalled/drugs/master.db) /path/to/ineedmy.db (for example ./ineedmy.db)
+# python import_drugs.py
+#   /path/to/freemedforms-freedata/master.db
+#    (for example
+#    /usr/share/freemedforms/datapacks/appinstalled/drugs/master.db)
+#   /path/to/ineedmy.db (for example ./ineedmy.db)
 
-if __name__=='__main__':
+if __name__ == '__main__':
     src_conn = sqlite3.connect(sys.argv[1])
     tgt_conn = sqlite3.connect(sys.argv[2])
 
@@ -37,13 +41,7 @@ if __name__=='__main__':
         no_spaces = re.sub('\\s+', '', base_name)
         for idx in range(len(no_spaces)-2):
             trigram = no_spaces[idx:(idx+3)]
-            cur.execute('INSERT INTO DrugNameParts VALUES(?,?)', (trigram, drug_id))
-        
+            cur.execute('INSERT INTO DrugNameParts VALUES(?,?)',
+                        (trigram, drug_id))
+
     tgt_conn.commit()
-
-        
-    
-
-        
-
-        
