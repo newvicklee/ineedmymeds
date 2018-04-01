@@ -1,91 +1,95 @@
 <html>
     {% include 'header.html' %}
 
+    <div class="container-flex">
+        <div class="content-container">
 
-        <h1 class="header-title">Which medication are you looking for?</h1>
+            <div class="question-container">
+                <h1 class="header-title">Which medication are you looking for?</h1>
+            </div>
 
-        <div class="row">
-            <section class="search-box">
-                <label for="search-med"><i class="fas fa-search"></i>
-                    <span class="sr-only">Search for a Medication</span>
-                </label>
-                <input id="search-med" class="search-input" tabindex="1" placeholder="Search for a Medication" title="Press Enter to Search">
-                <div class="btn-position">
-                    <a id="show-pharmacies-button" class="btn btn-blue"><span>Search</span></a>
+            <!-- START Search Container -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <input class="input-cta" type="text">
+                    <div class="btn-cta">
+                        <span class="cta-text">Search</span>
+                    </div>
                 </div>
-            </section>
-        </div> 
-
-    <!-- Template section for Showing Selected Patient -->
-        <div id="show-pharmacies"></div>
-    <!-- End of template section for Showing Selected Patient -->
+            </div> 
+            <!-- END Search Container -->
 
 
-    <script id="template-showPharmacies" type="text/x-handlebars-template">
-        {% raw %}
-            {{#this}}
-        <div class="row">
-            <p class="row-title">Matches:</p>
+            <!-- START MATCH -->
+            <div class="match-container">
+                <h2 class="match-found">We found <br><span class="badge badge--medName">Fluoxetine 20mg</span> at these locations:</h2>
+            </div>
+            <!-- END MATCH -->
+
+
+            <!-- START POSTS -->
+            <div class="post-container">
+                <div class="post">
+                    <div class="postCard">
+                        <div class="postInfo">
+                            <div class="postName">Pharmacy Name</div>
+                            <div class="postStreetAdress">888 International Village</div>
+                            <div class="postCityProv">Vancouver, BC</div>
+                            <div class="postPhone">604 123 4567</div>
+                            <div class="postHours">OPEN 10AM - 6PM</div>
+                        </div>
+                        <div class="postRating">
+                            <i class="fas fa-thumbs-up fa-2x"></i>
+                            <div class="postRatingNum">96%</div>
+                        </div>
+                    </div>
+                    <div class="postThumbs">
+                        <a href="#" class="rate-thumbs-up" title="Thumbs Up"><i class="far fa-thumbs-up fa-3x thumbs"></i></a>
+                        <a href="#" class="rate-thumbs-down" title="Thumbs Down"><i class="far fa-thumbs-down fa-3x"></i></a>
+                    </div>
+                </div>
+                <div class="post">
+                    <div class="postCard">
+                        <div class="postInfo">
+                            <div class="postName">Pharmacy Name</div>
+                            <div class="postStreetAdress">888 International Village</div>
+                            <div class="postCityProv">Vancouver, BC</div>
+                            <div class="postPhone">604 123 4567</div>
+                            <div class="postHours">OPEN 10AM - 6PM</div>
+                        </div>
+                        <div class="postRating">
+                            <i class="fas fa-thumbs-up fa-2x"></i>
+                            <div class="postRatingNum">96%</div>
+                        </div>
+                    </div>
+                    <div class="postThumbs">
+                        <a href="#" class="rate-thumbs-up" title="Thumbs Up"><i class="far fa-thumbs-up fa-3x thumbs"></i></a>
+                        <a href="#" class="rate-thumbs-down" title="Thumbs Down"><i class="far fa-thumbs-down fa-3x"></i></a>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <!-- END POSTS-->
+
+
+
         </div>
+    </div>
 
-
-        <div class="card_gallery">
-            {{#each pharmacies}}
-            <article class="card-block">
-                <section class="card-body">
-                    <h1 class="card-title"><a href="#">{{ pharmacy_name}} </a></h1>
-                    <!--
-                    <span class="fa-layers float-left">
-                        <span class="far fa-circle fa-3x" style="color: orange;"></span>
-                        <strong class="fa-layers-text" data-fa-transform="down-3 right-6">97%</strong>
-                    </span>
-                    -->
-                    <div class="user-label clear-fix">
-                        <a href="#"><span class="user-label--name">{{ pharmacy_address }}</span></a>
-                    </div>
-                    <div class="user-label clear-fix">
-                        <a href="#"><span class="user-label--name">{{ pharmacy_phone }}</span></a>
-                    </div>
-                </section>
-                <section class="card-block-section">
-                    <div class="voting">
-                        <div class="icon-rating"><i class="fas fa-thumbs-up fa-4x" style="color: green;"></i></div>
-                        <div class="icon-rating"><i class="fas fa-thumbs-down fa-4x" style="color: red;"></i></div>
-                    </div>
-                </section>
-                <section class="card-block-section">
-                    <div class="rating-number">
-                        <span class="fa-layers">
-                            <span class="far fa-circle fa-4x"></span>
-                            <strong class="fa-layers-text" data-fa-transform="down-3 right-22">97%</strong>
-                        </span>
-                    </div>
-                </section>
-            </article>
-            {{/each}}
+    <div class="footer-container">
+        <div class="footer">
+            <div class="footer-credits">
+                <p class="footer-credit"><a href="https://github.com/newvicklee/ineedmymeds">Source code</a> released under the MIT license.</p>
+            </div>
         </div>
-{{/this}}
-    {% endraw %}
-    </script>
-
-
-
-
-
-
-    <div class="footer">
-        <!--<p>I need my meds 2018</p>-->
     </div>
 
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="/static/js/model.js"></script>
-<script src="/static/js/view.js"></script>
-<script src="/static/js/controller.js"></script>
-<script src="/static/js/helper.js"></script>
-<script src="/static/js/app.js"></script>
+
+
 </body>
 
 

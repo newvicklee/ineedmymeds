@@ -1,0 +1,9 @@
+{
+    "scripts": {
+        "scss": "node-sass --output-style compressed -o app/static/css app/static/scss",
+        "scsswatch": "node-sass -watch app/static/scss --output-style compressed -o app/static/css app/static/scss"
+    },
+    "devDependencies": {
+          "node-sass": "4.8.3"
+    }
+}

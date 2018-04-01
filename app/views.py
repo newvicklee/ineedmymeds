@@ -66,9 +66,9 @@ def search():
     for idx in range(len(no_spaces)-2):
         trigram = no_spaces[idx:(idx+3)]
         for drug_id in cur.execute("""SELECT drug_id
-FROM DrugNameParts
-WHERE Part = ?
-LIMIT 100""", (trigram,)):
+                                    FROM DrugNameParts
+                                    WHERE Part = ?
+                                    LIMIT 100""", (trigram,)):
             id_counts[drug_id[0]] = id_counts.get(drug_id[0], 0) + 1
 
     sorted_id_counts = sorted(list(id_counts.items()),
@@ -90,11 +90,11 @@ LIMIT 100""", (trigram,)):
 
         # fetch availability
         pharmacies = list()
-        for row in cur.execute("""SELECT pharma_id,
-(lat - ?) * (lat - ?) + (long - ?) * (long - ?) AS distance
-FROM PharmaLoc
-ORDER BY distance ASC
-LIMIT 10""", (loc_lat, loc_lat, loc_long, loc_long)):
+        for row in cur.execute(
+        """SELECT pharma_id, (lat - ?) * (lat - ?) + (long - ?) * (long - ?) AS distance
+        FROM PharmaLoc
+        ORDER BY distance ASC
+        LIMIT 10""", (loc_lat, loc_lat, loc_long, loc_long)):
             pharma_id = row[0]
             pharmacies.append({'id': pharma_id})
 

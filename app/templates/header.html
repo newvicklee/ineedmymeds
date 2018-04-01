@@ -14,7 +14,7 @@
     <title>I need my meds</title>
 
     <!-- Custom Fonts -->
-    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
 
     <!-- Theme CSS -->
     <link href="/static/css/normalize.css" rel="stylesheet">
@@ -25,14 +25,18 @@
 
 <body>
 
-    <div class="wrap">
+    <div>
 
-        <nav class="navbar">
-            <a class="navbar-brand" href="/">
-                <span class="navbar-logo"><img style="width:150px;" src="/static/imgs/logo.png"/></span>
-                <!--<span class="navbar-title">I need my meds</span> -->
-            </a>
-            <a href="{{ url_for('login') }}" class="menu signup">Log In</a>
+        <nav class="menu-container">
+            <div class="menu">
+                <a class="navbar-brand" href="/">
+                    <span class="navbar-logo"><img class="logo" src="/static/imgs/logo.png"/></span>
+                    <!--<span class="navbar-title">I need my meds</span> -->
+                </a>
+                <div>
+                    <a href=# class="login">Log In</a>
+                </div>
+            </div>
         </nav>
 
 
