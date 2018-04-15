@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head class="client-view">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='imgs/favicon.png') }}">
+
+    <title>I need my meds</title>
+
+    <!-- Custom Fonts -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous">
+
+    <!-- Theme CSS -->
+    <link href="/static/css/normalize.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="/static/js/app.js"></script>
+
+
+</head>
+
+<body>
+
+    <div>
+
+        <nav class="menu-container">
+            <div class="menu">
+                <a class="navbar-brand" href="/">
+                    <span class="navbar-logo"><img class="logo" src="/static/imgs/logo.png"/></span>
+                    <!--<span class="navbar-title">I need my meds</span> -->
+                </a>
+                <div>
+                    <a href=# class="login">Log In</a>
+                </div>
+            </div>
+        </nav>
+
+
+{% block content %}{% endblock %}

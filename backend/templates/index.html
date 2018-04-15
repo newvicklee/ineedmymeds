@@ -1,0 +1,120 @@
+<html>
+    {% include 'header.html' %}
+
+    <div class="container-flex">
+        <div class="content-container">
+
+            <div class="question-container">
+                <h1 class="header-title">Which medication are you looking for?</h1>
+            </div>
+
+            <!-- START Search Container -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <input class="input-cta" type="text" id="input-med">
+                    <div class="btn-cta" id="search-med" v-on:click.prevent="searchMed">
+                        <span class="cta-text">Search</span>
+                    </div>
+                </div>
+            </div> 
+            <!-- END Search Container -->
+
+
+            <!-- START MATCH -->
+            <div class="match-container">
+                <h2 class="match-found">We found <br><span class="badge badge--medName">Fluoxetine 20mg</span> at these locations:</h2>
+            </div>
+            <!-- END MATCH -->
+
+
+            <!-- START POSTS -->
+            <div class="post-container">
+                <div class="post">
+                    <div class="postCard">
+                        <div class="postInfo">
+                            <div class="postName">Pharmacy Name</div>
+                            <div class="postStreetAdress">888 International Village</div>
+                            <div class="postCityProv">Vancouver, BC</div>
+                            <div class="postPhone">604 123 4567</div>
+                            <div class="postHours">OPEN 10AM - 6PM</div>
+                        </div>
+                        <div class="postRating">
+                            <i class="fas fa-thumbs-up fa-2x"></i>
+                            <div class="postRatingNum">96%</div>
+                        </div>
+                    </div>
+                    <div class="postThumbs">
+                        <a href="#" class="rate-thumbs-up" title="Thumbs Up"><i class="far fa-thumbs-up fa-3x thumbs"></i></a>
+                        <a href="#" class="rate-thumbs-down" title="Thumbs Down"><i class="far fa-thumbs-down fa-3x"></i></a>
+                    </div>
+                </div>
+                <div class="post">
+                    <div class="postCard">
+                        <div class="postInfo">
+                            <div class="postName">Pharmacy Name</div>
+                            <div class="postStreetAdress">888 International Village</div>
+                            <div class="postCityProv">Vancouver, BC</div>
+                            <div class="postPhone">604 123 4567</div>
+                            <div class="postHours">OPEN 10AM - 6PM</div>
+                        </div>
+                        <div class="postRating">
+                            <i class="fas fa-thumbs-up fa-2x"></i>
+                            <div class="postRatingNum">96%</div>
+                        </div>
+                    </div>
+                    <div class="postThumbs">
+                        <a href="#" class="rate-thumbs-up" title="Thumbs Up"><i class="far fa-thumbs-up fa-3x thumbs"></i></a>
+                        <a href="#" class="rate-thumbs-down" title="Thumbs Down"><i class="far fa-thumbs-down fa-3x"></i></a>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <!-- END POSTS-->
+
+
+
+        </div>
+    </div>
+
+    <div class="footer-container">
+        <div class="footer">
+            <div class="footer-credits">
+                <p class="footer-credit"><a href="https://github.com/newvicklee/ineedmymeds">Source code</a> released under the MIT license.</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
