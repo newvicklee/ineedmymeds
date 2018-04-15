@@ -1,9 +1,44 @@
 {
-    "scripts": {
-        "scss": "node-sass --output-style compressed -o app/static/css app/static/scss",
-        "scsswatch": "node-sass -watch app/static/scss --output-style compressed -o app/static/css app/static/scss"
-    },
-    "devDependencies": {
-          "node-sass": "4.8.3"
-    }
+  "name": "ineedmymeds",
+  "version": "0.1.0",
+  "description": "Crowd sourced app to find medications",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "build": "webpack --mode development --config webpack.config.js"
+  },
+  "author": "Newvick Lee",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "env",
+      "react"
+    ]
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.23.0",
+    "css-loader": "^0.28.11",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.0",
+    "node-sass": "^4.8.3",
+    "sass-loader": "^7.0.1",
+    "style-loader": "^0.20.3",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14",
+    "webpack-dev-server": "^3.1.3"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.5",
+    "@fortawesome/react-fontawesome": "0.0.18",
+    "axios": "^0.18.0",
+    "prop-types": "^15.5.4",
+    "query-string": "^6.0.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-router-dom": "^4.0.0"
+  }
 }
