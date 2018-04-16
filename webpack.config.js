@@ -2,11 +2,11 @@ const path = require('path');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = { 
-  entry: {
-      main: './frontend/index.js',
-  },  
+  entry: [
+      './frontend/index.js'
+  ],  
   output: {
-      path: path.resolve(__dirname, 'frontend/dist'),
+      path: path.resolve(__dirname, '/frontend/dist'),
       filename: '[name].bundle.js',
   },  
   devServer: {
@@ -14,7 +14,8 @@ module.exports = {
           "/api": {
               target: 'http://localhost:5000',
               pathRewrite: { '^/api': '' },
-          },
+          }
+      },
       historyApiFallback: true,
   },
   module: {
@@ -46,7 +47,18 @@ module.exports = {
           "css-loader",
           "sass-loader"
         ]
-      }   
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
+      },  
     ]   
   },  
   plugins: [
@@ -59,5 +71,5 @@ module.exports = {
       chunkFilename: "[id].css"
     })  
   ]
-};
+}
 
