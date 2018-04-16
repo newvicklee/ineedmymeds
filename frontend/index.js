@@ -7,8 +7,8 @@ import logo from './imgs/logo.png';
 
 const CARDINFO = [
     {pharmacyName: 'London Drugs #1', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
-    {pharmacyName: 'London Drugs #1', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
-    {pharmacyName: 'London Drugs #1', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
+    {pharmacyName: 'London Drugs #2', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
+    {pharmacyName: 'London Drugs #3', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
 ];
 
 const SEARCHRESULT = 'Fluoxetine 20mg';
@@ -16,6 +16,12 @@ const SEARCHRESULT = 'Fluoxetine 20mg';
 
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchBarText: 'Fluoxetine 20mg',
+        };
+    };
     render (props) {
         return (
             <div>
@@ -23,9 +29,8 @@ class App extends React.Component {
                 <div className="container-flex">
                     <div className="content-container">
                         <Question />
-                        <SearchBar />
-                        <SearchResult
-                            searchResult={this.props.searchResult}
+                        <SearchBar 
+                            searchBarText={this.state.searchBarText} 
                         />
                             
                         <Card 
@@ -67,27 +72,33 @@ class Question extends React.Component {
 
 
 class SearchBar extends React.Component {
-    render () {
+    render (props) {
+        let searchBarText = this.props.searchBarText;
         return (
+        <div>
             <div className="search-container">
                 <div className="search-bar">
-                    <input className="input-cta" type="text" id="input-med" />
+                    <input className="input-cta" type="text" id="input-med" value={searchBarText}/>
                     <div className="btn-cta" id="search-med">
                         <span className="cta-text">Search</span>
                     </div>
                 </div>
             </div>
+            <div className="match-container">
+                <SearchResult 
+                    searchBarText={searchBarText}
+                />
+            </div>
+        </div>
         )
     };
 };
  
 class SearchResult extends React.Component {
-    render () {
-        let searchResult = this.props.searchResult;
+    render (props) {
+        let searchBarText = this.props.searchBarText;
         return (
-            <div className="match-container">
-                <h2 className="match-found">We found <span className="badge badge--medName">{searchResult}</span> at these locations:</h2>
-            </div>
+                <h2 className="match-found">We found <span className="badge badge--medName">{searchBarText}</span> at these locations:</h2>
         )
     };
 };
