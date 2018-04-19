@@ -1,17 +1,12 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const api = require('./utils/api');
 require('./style.scss');
 import logo from './imgs/logo.png';
 
 //var App = require('./components/App');
 
-const CARDINFO = [
-    {pharmacyName: 'London Drugs #1', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
-    {pharmacyName: 'London Drugs #2', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
-    {pharmacyName: 'London Drugs #3', pharmacyAddress: '888 International Village', pharmacyCity: 'Vancouver', pharmacyPhone: '604-111-2222', pharmacyHours: '8AM-10PM', pharmacyRating: '96%'},
-];
 
-const SEARCHRESULT = 'Fluoxetine 20mg';
 
 
 
@@ -19,10 +14,52 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchBarText: 'Fluoxetine 20mg',
+            searchText: '',
+            submitted: false,
+            drugIsKnown: null,
+            pharmacyInfo: null
         };
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.searchDrugs = this.searchDrugs.bind(this);
     };
-    render (props) {
+
+    handleSubmit(newSearchText) {
+        this.setState(function () {
+            return {
+                searchText: newSearchText,
+                submitted: true,
+            }
+        }, function () {
+            this.searchDrugs();
+        });
+    };
+
+    searchDrugs() {
+        const self = this;
+        let searchText = this.state.searchText;
+        api.search(searchText)
+            .then(function (response) {
+                let newPharmacyInfo;
+                if (response.data.pharmacies === undefined) {
+                    newPharmacyInfo = null;
+                } else {
+                    newPharmacyInfo = response.data.pharmacies;
+                };
+
+                self.setState(function () {
+                    return {
+                        drugIsKnown: response.data.known,
+                        pharmacyInfo: newPharmacyInfo,
+                    };
+                });
+            })
+    };
+
+
+
+    render () {
+        let submitted = this.state.submitted;
+        let drugIsKnown = this.state.drugIsKnown;
         return (
             <div>
                 <Header />
@@ -30,12 +67,19 @@ class App extends React.Component {
                     <div className="content-container">
                         <Question />
                         <SearchBar 
-                            searchBarText={this.state.searchBarText} 
+                            onSubmit={this.handleSubmit}
+                            submitted={this.state.submitted}
+                            searchText={this.state.searchText}
                         />
-                            
-                        <Card 
-                            pharmacyInfo={this.props.pharmacyInfo}
-                        />
+                        {submitted &&
+                            <SearchResult 
+                                searchText={this.state.searchText}
+                                drugIsKnown={this.state.drugIsKnown}
+                            />}
+                        {drugIsKnown &&   
+                            <Card 
+                                pharmacyInfo={this.state.pharmacyInfo}
+                            />}
                     </div>
                 </div>
             </div>
@@ -72,22 +116,42 @@ class Question extends React.Component {
 
 
 class SearchBar extends React.Component {
-    render (props) {
-        let searchBarText = this.props.searchBarText;
+    constructor(props) {
+        super(props);
+        this.state = {
+            newSearchText: '',
+        };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    };
+    handleChange(event) {
+        let value = event.target.value;
+        this.setState(function () {
+            return {
+                newSearchText: value
+            }
+        });
+    };
+    handleSubmit(event) {
+        event.preventDefault();
+        let newSearchText = this.state.newSearchText;
+        this.props.onSubmit(newSearchText);
+    };
+    render () {
+        let newSearchText = this.state.newSearchText;
+        let handleChange = this.handleChange;
+        let handleSubmit = this.handleSubmit;
+        let submitted = this.props.submitted;
+        let searchText = this.props.searchText;
         return (
         <div>
             <div className="search-container">
-                <div className="search-bar">
-                    <input className="input-cta" type="text" id="input-med" value={searchBarText}/>
-                    <div className="btn-cta" id="search-med">
+                <form className="search-bar" onSubmit={handleSubmit}>
+                    <input className="input-cta" type="text" id="input-med" value={newSearchText} onChange={handleChange} autoComplete='off'/>
+                    <div className="btn-cta" id="search-med" onClick={handleSubmit}>
                         <span className="cta-text">Search</span>
                     </div>
-                </div>
-            </div>
-            <div className="match-container">
-                <SearchResult 
-                    searchBarText={searchBarText}
-                />
+                </form>
             </div>
         </div>
         )
@@ -95,10 +159,19 @@ class SearchBar extends React.Component {
 };
  
 class SearchResult extends React.Component {
-    render (props) {
-        let searchBarText = this.props.searchBarText;
+    render () {
+        let drugIsKnown = this.props.drugIsKnown;
+        let searchText = this.props.searchText;
+        
+        let resultElement = drugIsKnown ? (
+                <h2 className="match-found">We found <span className="badge badge--medName">{searchText}</span> at these locations:</h2>
+            ) : (
+                <h2 className="match-found">Sorry, we do not have <span className="badge badge--medName">{searchText}</span> in our records</h2>
+            );
         return (
-                <h2 className="match-found">We found <span className="badge badge--medName">{searchBarText}</span> at these locations:</h2>
+                <div className="match-container">
+                {resultElement}
+                </div>
         )
     };
 };
@@ -107,12 +180,10 @@ class SearchResult extends React.Component {
 class CardRow extends React.Component {
     render () {
         const pharmacy = this.props.pharmacy;
-        const pharmacyName = pharmacy.pharmacyName;
-        const pharmacyAddress = pharmacy.pharmacyAddress;
-        const pharmacyCity = pharmacy.pharmacyCity;
-        const pharmacyPhone = pharmacy.pharmacyPhone;
-        const pharmacyHours = pharmacy.pharmacyHours;
-        const pharmacyRating = pharmacy.pharmacyRating;
+        const pharmacyName = pharmacy.name;
+        const pharmacyAddress = pharmacy.address;
+        const pharmacyPhone = pharmacy.phone;
+        const pharmacyRating = pharmacy.available;
 
         return (
                 <div className="post">
@@ -120,9 +191,8 @@ class CardRow extends React.Component {
                         <div className="postInfo">
                             <div className="postName">{pharmacyName}</div>
                             <div className="postStreetAdress">{pharmacyAddress}</div>
-                            <div className="postCityProv">{pharmacyCity}</div>
                             <div className="postPhone">{pharmacyPhone}</div>
-                            <div className="postHours">{pharmacyHours}</div>
+                            <div className="postHours">Hours: </div>
                         </div>
                         <div className="postRating">
                             <i className="fas fa-thumbs-up fa-2x"></i>
@@ -141,6 +211,15 @@ class CardRow extends React.Component {
 
 
 class Card extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading: true,
+            results: null,
+        }
+    };
+
+
     render () {
         let cardRows = [];
         let pharmacyInfo = this.props.pharmacyInfo;
@@ -148,7 +227,7 @@ class Card extends React.Component {
             cardRows.push(
                     <CardRow
                         pharmacy={pharmacy}
-                        key={pharmacy.pharmacyName}
+                        key={pharmacy.name + pharmacy.phone}
                     />
                     )
         });
@@ -178,9 +257,6 @@ class Footer extends React.Component {
 
 
 ReactDOM.render(
-  <App 
-    pharmacyInfo={CARDINFO}
-    searchResult={SEARCHRESULT}
-  />, 
+  <App />, 
   document.getElementById('app')
 );

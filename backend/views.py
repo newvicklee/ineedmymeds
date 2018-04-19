@@ -4,6 +4,7 @@ import datetime
 import json
 
 from flask import render_template, abort, request, g, jsonify
+from .cors import crossdomain
 from backend import app
 
 
@@ -42,7 +43,23 @@ def login():
 
 
 @app.route('/api/v1/search', methods=['GET'])
+@crossdomain(origin='*')
 def search():
+    """ Fetches pharmacy information for a specific medication
+
+    Parameters (querystrings):
+    -------------------------
+        drug: name of medication
+        location: LAT and LONG coordinates
+
+    Returns:
+    -------
+    json
+        known: boolean
+        pharmacies: list of pharmacies. Each element has pharmacy info, and availability (unknown | yes | no)
+        other-drugs: list of other medications similar to the one in the search query
+
+    """
     drug = request.args.get('drug').lower()
     location = request.args.get('location')
 
