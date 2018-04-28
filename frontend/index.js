@@ -83,19 +83,16 @@ class App extends React.Component {
                             submitted={this.state.submitted}
                             searchText={this.state.searchText}
                         />
-                        {submitted &&
-                            <SearchResult 
-                                searchText={this.state.searchText}
-                                drugIsKnown={this.state.drugIsKnown}
-                            />}
                         {!drugIsKnown && otherDrugs &&
                             <OtherDrugs
                                 otherDrugs={this.state.otherDrugs}
                                 onSubmit={this.handleSubmit}
+                                searchText={this.state.searchText}
                             />}
                         {drugIsKnown &&   
                             <Card 
                                 pharmacyInfo={this.state.pharmacyInfo}
+                                searchText={this.state.searchText}
                             />}
                     </div>
                 </div>
@@ -175,23 +172,6 @@ class SearchBar extends React.Component {
     };
 };
  
-class SearchResult extends React.Component {
-    render () {
-        let drugIsKnown = this.props.drugIsKnown;
-        let searchText = this.props.searchText;
-        
-        let resultElement = drugIsKnown ? (
-                <h2 className="match-found">We found <span className="badge badge--medName">{searchText}</span> at these locations:</h2>
-            ) : (
-                <h2 className="match-found">Sorry, we do not have <span className="badge badge--medName">{searchText}</span> in our records</h2>
-            );
-        return (
-                <div className="match-container">
-                {resultElement}
-                </div>
-        )
-    };
-};
 
 class OtherDrugs extends React.Component {
     constructor(props) {
@@ -211,8 +191,10 @@ class OtherDrugs extends React.Component {
     render () {
         let otherDrugs = this.props.otherDrugs;
         let handleClick = this.handleClick;
+        let searchText = this.props.searchText;
         return (
             <div className="post-container">
+                <h2 className="match-found">Sorry, we do not have <span className="badge badge--medName">{searchText}</span> in our records. Did you mean: </h2>
                 <div className="post">
                     <div className="postCard miniCard">
                         <div className="postRow otherDrugs">
@@ -283,6 +265,7 @@ class Card extends React.Component {
     render () {
         let cardRows = [];
         let pharmacyInfo = this.props.pharmacyInfo;
+        let searchText = this.props.searchText;
         pharmacyInfo.forEach(function(pharmacy) {
             cardRows.push(
                     <CardRow
@@ -294,6 +277,7 @@ class Card extends React.Component {
                         
         return (
             <div className="post-container">
+                <h2 className="match-found">You might find <span className="badge badge--medName">{searchText}</span> at these locations:</h2>
                 {cardRows}
             </div>
         )
