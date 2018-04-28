@@ -17,49 +17,61 @@ class App extends React.Component {
             searchText: '',
             submitted: false,
             drugIsKnown: null,
-            pharmacyInfo: null
+            pharmacyInfo: null,
+            otherDrugs: null
         };
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.searchDrugs = this.searchDrugs.bind(this);
+        this.updateKnownDrugPharmacies = this.updateKnownDrugPharmacies.bind(this);
     };
 
     handleSubmit(newSearchText) {
+        const self = this;
         this.setState(function () {
             return {
                 searchText: newSearchText,
                 submitted: true,
             }
         }, function () {
-            this.searchDrugs();
+            api.search(this.state.searchText)
+                .then(function (response) {
+                    self.updateKnownDrugPharmacies(response);
+                });
         });
     };
 
-    searchDrugs() {
-        const self = this;
-        let searchText = this.state.searchText;
-        api.search(searchText)
-            .then(function (response) {
-                let newPharmacyInfo;
-                if (response.data.pharmacies === undefined) {
-                    newPharmacyInfo = null;
-                } else {
-                    newPharmacyInfo = response.data.pharmacies;
-                };
 
-                self.setState(function () {
-                    return {
-                        drugIsKnown: response.data.known,
-                        pharmacyInfo: newPharmacyInfo,
-                    };
-                });
-            })
+    updateKnownDrugPharmacies(response) {
+        /* Takes the promise returned from api.search() and updates whether drugIsKnown and pharmacyInfo
+         *
+         * Parameters
+         * ----------
+         *
+         *  response (json): returned from api.search()
+         *
+         */
+        let newPharmacyInfo;
+        if (response.data.pharmacies === undefined) {
+            newPharmacyInfo = null;
+        } else {
+            newPharmacyInfo = response.data.pharmacies;
+        };
+
+        this.setState(function () {
+            return {
+                drugIsKnown: response.data.known,
+                pharmacyInfo: newPharmacyInfo,
+                otherDrugs: response.data['other-drugs']
+            };
+        });
     };
+
 
 
 
     render () {
         let submitted = this.state.submitted;
         let drugIsKnown = this.state.drugIsKnown;
+        let otherDrugs = this.state.otherDrugs;
         return (
             <div>
                 <Header />
@@ -71,14 +83,16 @@ class App extends React.Component {
                             submitted={this.state.submitted}
                             searchText={this.state.searchText}
                         />
-                        {submitted &&
-                            <SearchResult 
+                        {!drugIsKnown && otherDrugs &&
+                            <OtherDrugs
+                                otherDrugs={this.state.otherDrugs}
+                                onSubmit={this.handleSubmit}
                                 searchText={this.state.searchText}
-                                drugIsKnown={this.state.drugIsKnown}
                             />}
                         {drugIsKnown &&   
                             <Card 
                                 pharmacyInfo={this.state.pharmacyInfo}
+                                searchText={this.state.searchText}
                             />}
                     </div>
                 </div>
@@ -158,23 +172,51 @@ class SearchBar extends React.Component {
     };
 };
  
-class SearchResult extends React.Component {
-    render () {
-        let drugIsKnown = this.props.drugIsKnown;
-        let searchText = this.props.searchText;
+
+class OtherDrugs extends React.Component {
+    constructor(props) {
+        super(props);
         
-        let resultElement = drugIsKnown ? (
-                <h2 className="match-found">We found <span className="badge badge--medName">{searchText}</span> at these locations:</h2>
-            ) : (
-                <h2 className="match-found">Sorry, we do not have <span className="badge badge--medName">{searchText}</span> in our records</h2>
-            );
-        return (
-                <div className="match-container">
-                {resultElement}
-                </div>
-        )
+        this.handleClick = this.handleClick.bind(this);
+
     };
-};
+
+    handleClick(event) {
+        event.preventDefault();
+        let newSearchText = event.target.id;
+        //let newSearchText = this.state.newSearchText;
+        this.props.onSubmit(newSearchText);
+    };
+
+    render () {
+        let otherDrugs = this.props.otherDrugs;
+        let handleClick = this.handleClick;
+        let searchText = this.props.searchText;
+        return (
+            <div className="post-container">
+                <h2 className="match-found">Sorry, we do not have <span className="badge badge--medName">{searchText}</span> in our records. Did you mean: </h2>
+                <div className="post">
+                    <div className="postCard miniCard">
+                        <div className="postRow otherDrugs">
+                            {otherDrugs.map(function (otherDrug) {
+                                return (
+                                <div 
+                                    className="badge badge--medName badge--otherDrug"
+                                    id={otherDrug.name}
+                                    key={otherDrug.name}
+                                    onClick={handleClick}>
+                                        {otherDrug.name}
+                                </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+
+    };
+}
 
 
 class CardRow extends React.Component {
@@ -223,6 +265,7 @@ class Card extends React.Component {
     render () {
         let cardRows = [];
         let pharmacyInfo = this.props.pharmacyInfo;
+        let searchText = this.props.searchText;
         pharmacyInfo.forEach(function(pharmacy) {
             cardRows.push(
                     <CardRow
@@ -234,6 +277,7 @@ class Card extends React.Component {
                         
         return (
             <div className="post-container">
+                <h2 className="match-found">You might find <span className="badge badge--medName">{searchText}</span> at these locations:</h2>
                 {cardRows}
             </div>
         )

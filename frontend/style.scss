@@ -115,6 +115,7 @@ body {
     };
 }
 
+
 .post {
     display: flex;
     flex-direction: row;
@@ -142,6 +143,10 @@ body {
         box-shadow: 0 0 4px 0 rgba(46,62,72,.12),0 4px 12px 0 rgba(46,62,72,.12);
     }
 
+}
+
+.postCard.miniCard {
+    width: calc(55% - 1em);
 }
 
 .postInfo {
@@ -177,10 +182,32 @@ body {
     width: 20%;
 }
 
+.postColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 15px;
+
+}
+
+.postRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 15px;
+}
+
+
 .rate-thumbs-down,
 .rate-thumbs-up {
     text-decoration: none;
     color: black;
+}
+
+.otherDrugs {
+    flex-wrap: wrap;
+    font-size: 1.6em;
 }
 
 .badge {
@@ -190,6 +217,14 @@ body {
     text-transform: uppercase;
     border: 1px transparent solid;
     padding: 0.2em 0.5em;
+}
+
+.badge--otherDrug {
+    cursor: pointer;
+    margin: 0.4em 0 0.4em 0;
+    &:hover {
+        box-shadow: 0 0 4px 0 rgba(46,62,72,.12),0 4px 12px 0 rgba(46,62,72,.12);
+    }
 }
 
 .badge.badge--medName {
