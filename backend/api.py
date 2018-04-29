@@ -47,6 +47,8 @@ def login():
 def search():
     """ Fetches pharmacy information for a specific medication
 
+    * Adds the drug search into the Searches and DrugRequests table
+
     Parameters (querystrings):
     -------------------------
         drug: name of medication
