@@ -324,17 +324,23 @@ LIMIT 1""", (drug_id,)).fetchone()
 
 
 @app.route('/api/v1/drug/requested', methods=['GET'])
+@crossdomain(origin='*')
 def drugs_requested():
     # get DB
     db = get_db()
     cur = db.cursor()
 
     # get recently requested drugs
-    cur.execute("""SELECT DISTINCT drug_id
-FROM DrugRequests
+    cur.execute("""SELECT DISTINCT name, DrugNames.drug_id
+FROM DrugNames
+INNER JOIN DrugRequests ON DrugRequests.drug_id = DrugNames.drug_id
 ORDER BY when_requested
 LIMIT 30""")
     result = list()
     for row in cur:
-        result.append(row[0])
+        drug = {
+                'name': row[0],
+                'drug_id': row[1]
+                }
+        result.append(drug)
     return jsonify(result)
