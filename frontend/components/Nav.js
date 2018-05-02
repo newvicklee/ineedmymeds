@@ -10,7 +10,7 @@ function Nav () {
                 <span className="navbar-logo"><img className="logo" src={logo}/></span>
             </NavLink>
             <div>
-                <NavLink to='/pharmacy' className="login">Pharmacy? Log In</NavLink>
+                <NavLink to='/pharmacy' className="login">Pharmacy &rarr; Log In</NavLink>
             </div>
         </div>
     </nav>

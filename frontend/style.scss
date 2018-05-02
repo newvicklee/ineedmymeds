@@ -71,7 +71,6 @@ body {
 
 .content-container {
     display: flex;
-    //width: 60em;
     width: 100%;
     align-items: center;  // since using flex-direction column, need to use align-items to horizontally center items
     flex-direction: column;
@@ -143,6 +142,15 @@ body {
         box-shadow: 0 0 4px 0 rgba(46,62,72,.12),0 4px 12px 0 rgba(46,62,72,.12);
     }
 
+}
+
+.postCard.verticalCard {
+    flex-direction: column;
+}
+
+.postCard.fullWidthCard {
+    width: 100%;
+    padding: 2em;
 }
 
 .postCard.miniCard {
@@ -274,6 +282,11 @@ body {
     border: none;
     cursor: pointer;
     padding-left: 2em;
+
+    &:hover {
+        background-color: #006dbf;
+        border-color: #006dbf;
+    }
 }
 
 .cta-text {
@@ -282,7 +295,7 @@ body {
     font-size: 1.3em;
 }
 
-.question-container {
+.title-container {
     margin-top: 5em;
     margin-bottom: 2em;
     padding: 0 0.6em;
@@ -291,6 +304,141 @@ body {
         font-size: 2.5em;
         font-weight: 700;
     }
+}
+
+.column-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.column-container.align-left {
+    align-items: flex-start;
+}
+
+.width-full {
+    padding: 0 0.6em;
+    @media (min-width: $tablet) {
+        width: 60em;
+    }
+
+}
+
+
+.width-half {
+    @media (min-width: $tablet) {
+        width: 45%;
+    }
+}
+
+.welcome-container {
+    margin: 2em 0;
+    padding: 0 0.6em;
+}
+
+.control-checkbox {
+    // flex child property
+    flex: 0 1 40%;
+    margin: 1em;
+
+    .control {
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    // custom checkbox
+    input {
+        z-index: -1;
+        position: relative;
+    }
+
+    span {
+        height: 1.5em;
+        width: 1.5em;
+        border: 1px solid grey;
+        display: inline-block;
+        position: relative;
+        vertical-align: middle;
+        margin-right: 0.4em;
+        border-radius: 5px;
+    }
+
+    [type=checkbox]:checked + span:before {
+        content: '\2714';
+        position: absolute;
+        top: -5px;
+        left: 0;
+        font-size: 1.5em;
+        color: #00d400;
+    }
+    // end custom checkbox
+
+
+}
+
+
+.drug-checkboxes {
+    flex-wrap: wrap;
+}
+
+.login-container {
+    margin-top: 5em;
+    margin-bottom: 2em;
+    padding: 0 0.6em;
+
+    .login-title {
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+}
+
+.login-input {
+    background-color: #fff;
+    border: 1px solid #e6ecf0;
+    border-radius: 3px;
+    padding: 0.1em;
+    line-height: 2em;
+    margin: 1.5em 0;
+    color: #657786;
+
+    width: 35%;
+    
+    &:focus {
+        color: #14171a;
+        border-color: rgba(0,132,180,0.5);
+    }
+}
+
+.submit-button {
+    display: block;
+
+    width: 15%;
+
+    border-radius: 100px;
+    box-shadow: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 6px 16px;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.submit-button.btn-blue {
+    background-color: #3e70ff;
+    border: 1px solid #3e70ff;
+    color: #fff;
+
+    &:hover {
+        background-color: #006dbf;
+        border-color: #006dbf;
+    }
+}
+
+.asterisk-point {
+    font-size: 0.8em;
 }
 
 .footer-container {

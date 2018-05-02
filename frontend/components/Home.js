@@ -91,7 +91,7 @@ class Home extends React.Component {
 class Question extends React.Component {
     render () {
         return (
-            <div className="question-container">
+            <div className="title-container">
                 <h1 className="header-title">Which medication are you looking for?</h1>
             </div>
         )
