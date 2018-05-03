@@ -62,12 +62,16 @@ function DrugCheckbox (props) {
     let drugName = props.drugName;
     let checked = props.checked;
     let drugID = props.drugID;
+    let checkedState = props.checkedState;
+    let handleInputChange = props.handleInputChange;
     return (
               <div className="control-checkbox">
                 <label className="control">
                     <input type="checkbox" 
+                        checked={checkedState}
                         name={drugID}
                         value={drugName} 
+                        onChange={handleInputChange}
                         type="checkbox" />
                     <span></span>
                     {drugName}
@@ -86,6 +90,7 @@ class DrugsStock extends React.Component {
 
         this.createDrugCheckbox = this.createDrugCheckbox.bind(this);
         this.addInStockState = this.addInStockState.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
     };
 
     componentDidMount() {
@@ -100,16 +105,29 @@ class DrugsStock extends React.Component {
            }.bind(this));
     };
 
-    handleClick(event) {
+    handleInputChange(event) {
         let target = event.target;
-        let value = target.type;
+        let value = target.checked;
+        let name = target.name;
+
+        let index = this.state.drugRequests.findIndex(function (drug) {
+            return drug.drug_id == name;
+        });
+        const drugRequests = [...this.state.drugRequests];
+        drugRequests[index].in_stock = !drugRequests[index].in_stock;
+        
+        this.setState(function() {
+            return { drugRequests };
+        });
     };
 
     createDrugCheckbox(drug) {
         return <DrugCheckbox
+                    checkedState={drug.in_stock}
                     drugID={drug.drug_id}
                     drugName={drug.name}
                     key={drug.drug_id}
+                    handleInputChange={this.handleInputChange}
                 />;
     };
 
@@ -122,7 +140,7 @@ class DrugsStock extends React.Component {
          * @returns {array of objects} Returns drugRequests but each drug object has a new property in_stock that defaults to false
          */
         drugRequests.map(function (drug) {
-            drug.in_stock = false;
+            drug.in_stock = true;
         });
         return drugRequests;
     };
@@ -131,8 +149,8 @@ class DrugsStock extends React.Component {
 
     render() {
         let createDrugCheckbox = this.createDrugCheckbox;
-        console.log(this.state.drugRequests);
         let drugCheckboxes = this.state.drugRequests.map(createDrugCheckbox);
+        console.log(this.state.drugRequests);
         return (
             <div>
                 <div className="column-container width-full align-left">
