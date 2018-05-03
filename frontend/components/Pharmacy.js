@@ -80,23 +80,30 @@ class DrugsStock extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            drugsInStock: [],
             drugRequests: []
         };
 
         this.createDrugCheckbox = this.createDrugCheckbox.bind(this);
+        this.addInStockState = this.addInStockState.bind(this);
     };
 
     componentDidMount() {
         api.drugRequests()
            .then(function (drugRequests) {
+               let updatedDrugRequests = this.addInStockState(drugRequests.data);
                this.setState(function() {
                    return {
-                       drugRequests: drugRequests.data
+                       drugRequests: updatedDrugRequests
                    }
                });
            }.bind(this));
     };
 
+    handleClick(event) {
+        let target = event.target;
+        let value = target.type;
+    };
 
     createDrugCheckbox(drug) {
         return <DrugCheckbox
@@ -105,10 +112,26 @@ class DrugsStock extends React.Component {
                     key={drug.drug_id}
                 />;
     };
+
+    addInStockState(drugRequests) {
+        /*
+         * Adds the in_stock property for each drug in drugRequests, sets the default in_stock to false
+         *
+         * @param {array of objects} drugRequests is the array that is returned from api.drugRequests()
+         *
+         * @returns {array of objects} Returns drugRequests but each drug object has a new property in_stock that defaults to false
+         */
+        drugRequests.map(function (drug) {
+            drug.in_stock = false;
+        });
+        return drugRequests;
+    };
+
         
 
     render() {
         let createDrugCheckbox = this.createDrugCheckbox;
+        console.log(this.state.drugRequests);
         let drugCheckboxes = this.state.drugRequests.map(createDrugCheckbox);
         return (
             <div>
