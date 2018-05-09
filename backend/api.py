@@ -197,22 +197,64 @@ ORDER BY when_reported""", (pharma_id, drug_id))
     })
 
 
-@app.route('/api/v1/drug/<int:drug_id>/at/<int:pharma_id>/available',
-           methods=['POST'])
-def set_available(drug_id, pharma_id):
-    by_pharmacist = request.args.get('by-pharmacist') or 0
-    # get POST
-    availability = 1 if '1' in str(request.get_data()) else '0'
+@app.route('/api/v1/set-available', methods=['GET', 'POST', 'OPTIONS'])
+@crossdomain(origin='*', headers='content-type')
+def set_available():
+    # get JSON post data
+    req_data = request.get_json()['data']
+    req_newInStock = req_data.get('newInStock')
+    req_noStock = req_data.get('noStock')
+
+    # Initialize newInStock
+    newInStock = []
+    if req_newInStock:
+        for drug in req_newInStock:
+            # TODO: Get pharma_id from JSON
+            pharma_id = 215
+            now = now_int()
+            drug_id = drug['drug_id']
+            by_pharmacist = 1
+            newInStock.append((pharma_id, drug_id, 1, now, by_pharmacist))
+        newInStock = tuple(newInStock)
+
+    # Initialize noStock
+    noStock = []
+    if req_noStock:
+        for drug in req_noStock:
+            # TODO: Get pharma_id from JSON
+            pharma_id = 215
+            now = now_int()
+            drug_id = drug['drug_id']
+            by_pharmacist = 1
+            noStock.append((pharma_id, drug_id, now, by_pharmacist))
+        noStock = tuple(noStock)
 
     # get DB
     db = get_db()
     cur = db.cursor()
 
+    if newInStock:
+        cur.executemany('INSERT INTO Availabilities VALUES(?,?,?,?,?)', newInStock)
+
+    if noStock:
+        for drug in noStock:
+            sql = '''UPDATE Availabilities SET availability = 0, when_reported = ?, by_pharmacist = ?
+                    WHERE pharma_id = ? AND drug_id = ?'''
+            try:
+                cur.execute(sql, (drug[2], drug[3], drug[0], drug[1]))
+            except sqlite3.Error as error:
+                print("An error occured:", error.args[0])
+
+    db.commit()
+    
+    
+    """
     # set availability
     now = now_int()
     cur.execute('INSERT INTO Availabilities VALUES(?,?,?,?,?)',
                 (pharma_id, drug_id, availability, now, by_pharmacist))
     db.commit()
+    """
 
     return ""
 
