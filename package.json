@@ -36,6 +36,7 @@
     "@fortawesome/fontawesome": "^1.1.5",
     "@fortawesome/react-fontawesome": "0.0.18",
     "axios": "^0.18.0",
+    "immutability-helper": "^2.7.0",
     "prop-types": "^15.5.4",
     "query-string": "^6.0.0",
     "react": "^16.3.2",

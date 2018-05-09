@@ -1,6 +1,6 @@
 const React = require('react');
 const api = require('../utils/api');
-
+import update from 'immutability-helper';
 
 class Pharmacy extends React.Component {
     constructor(props) {
@@ -84,13 +84,16 @@ class DrugsStock extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            drugsInStock: [],
+            inStock: [],
+            newInStock: [],
+            noStock: [],
             drugRequests: []
         };
 
         this.createDrugCheckbox = this.createDrugCheckbox.bind(this);
         this.addInStockState = this.addInStockState.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     };
 
     componentDidMount() {
@@ -108,17 +111,82 @@ class DrugsStock extends React.Component {
     handleInputChange(event) {
         let target = event.target;
         let value = target.checked;
-        let name = target.name;
+        let drug_id = target.name;
 
-        let index = this.state.drugRequests.findIndex(function (drug) {
-            return drug.drug_id == name;
-        });
-        const drugRequests = [...this.state.drugRequests];
-        drugRequests[index].in_stock = !drugRequests[index].in_stock;
-        
-        this.setState(function() {
-            return { drugRequests };
-        });
+        function findIndex (myArr, drug_id) {
+            let result = myArr.findIndex(function (drug) {
+                return drug.drug_id == drug_id;
+            });
+            return result;
+        };
+
+        function removeByKey (myObj, deleteKey) {
+            return Object.keys(myObj)
+                .filter(key => key !== deleteKey)
+                .reduce((result, current) => {
+                    result[current] = myObj[current];
+                    return result;
+                }, {});
+        };
+
+        function removeByIndex (myArr, deleteIndex) {
+            const newArr = myArr.filter(function (el, index) {
+                return index !== deleteIndex;
+            });
+            return newArr;
+        };
+
+        const index = findIndex(this.state.drugRequests, drug_id);
+
+        const drugRequests = update(this.state.drugRequests,
+                {[index]: {in_stock: {$apply: function(x) {return !x;}}}});
+
+        if (drugRequests[index].in_stock == false) {
+            /* If user unclicks a checkbox, 
+             *     * add drug to noStock state
+             *     * remove drug from inStock and newInStock states
+             */
+
+            let noStock = update(this.state.noStock, 
+                    {$push: [drugRequests[index]]});
+            let newInStock = removeByIndex(this.state.newInStock, findIndex(this.state.newInStock, drug_id));
+            let inStock = removeByIndex(this.state.inStock, findIndex(this.state.inStock, drug_id));
+            this.setState({
+                newInStock: newInStock, 
+                inStock: inStock,
+                drugRequests: drugRequests, 
+                noStock: noStock
+            }, function() { return console.log(this.state);});
+        };
+        if (drugRequests[index].in_stock == true) {
+            /* If user clicks a checkbox, 
+             *     * remove drug from noStock state
+             *     * add drug to inStock and newInStock states
+             */
+            let newInStock = update(this.state.newInStock,
+                    {$push: [drugRequests[index]]});
+            let inStock = update(this.state.inStock,
+                    {$push: [drugRequests[index]]});
+            let noStock = removeByIndex(this.state.noStock, findIndex(this.state.noStock, drug_id));
+            this.setState({
+                newInStock: newInStock, 
+                inStock: inStock,
+                drugRequests: drugRequests, 
+                noStock: noStock
+            }, function() { return console.log(this.state);});
+        };
+       
+    };
+
+    handleSubmit(event) {
+        event.preventDefault();
+        let json_data = {
+            //TODO: Set pharma_id
+            newInStock: this.state.newInStock,
+            noStock: this.state.noStock
+        };
+        console.log(json_data);
+        api.setAvailability(json_data);
     };
 
     createDrugCheckbox(drug) {
@@ -140,7 +208,7 @@ class DrugsStock extends React.Component {
          * @returns {array of objects} Returns drugRequests but each drug object has a new property in_stock that defaults to false
          */
         drugRequests.map(function (drug) {
-            drug.in_stock = true;
+            drug.in_stock = false;
         });
         return drugRequests;
     };
@@ -150,7 +218,7 @@ class DrugsStock extends React.Component {
     render() {
         let createDrugCheckbox = this.createDrugCheckbox;
         let drugCheckboxes = this.state.drugRequests.map(createDrugCheckbox);
-        console.log(this.state.drugRequests);
+        let handleSubmit = this.handleSubmit;
         return (
             <div>
                 <div className="column-container width-full align-left">
@@ -160,6 +228,9 @@ class DrugsStock extends React.Component {
                     <div className="postCard width-full drug-checkboxes">
                         {drugCheckboxes}
                     </div>
+                </div>
+                <div className="column-container width-full">
+                    <button className="submit-button btn-blue" type="submit" onClick={handleSubmit}>Save</button>
                 </div>
             </div>
         )
