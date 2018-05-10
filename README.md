@@ -18,14 +18,15 @@ Open Data BC Hackathon 2018 Project. ineedmymeds crowdsources information about 
 
 ## Setting up the database
 
-There are two open source databases that we use. Download them here:
+The open source datasets that we use. Download them here:
     * BC After Hours Pharmacies [List](https://catalogue.data.gov.bc.ca/dataset/after-hours-pharmacies-in-bc/resource/681b4fa5-13a5-4273-a189-fc101f0f8356)
     * Free Drugs [Database](https://packages.debian.org/sid/freemedforms-freedata)
 
 ```shell
 cat create_db.sql | sqlite3 ineedmy.db
-python import_drugs.py /usr/share/freemedforms/datapacks/appinstalled/drugs/master.db ./ineedmy.db
-python import_pharmacies.py hlbcpharmaciesfeb282018.csv ineedmy.db  
+(venv) python data/import_drugs.py /usr/share/freemedforms/datapacks/appinstalled/drugs/master.db ./ineedmy.db
+(venv) python data/pharmacies_scraper.py
+python data/import_all_pharmacies.py data/pharmacies_list.csv ineedmy.db  
 ```
 
 ## Installing Dependencies
