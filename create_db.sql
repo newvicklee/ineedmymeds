@@ -3,9 +3,6 @@ BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS "DrugDoc" (
 	`doc`	BLOB NOT NULL
 );
-CREATE TABLE `PharmaDoc` (
-	`doc`	BLOB NOT NULL
-);
 CREATE TABLE `DrugNames` (
 	`name`	TEXT NOT NULL UNIQUE,
 	`drug_id`	INTEGER NOT NULL
@@ -18,6 +15,15 @@ CREATE TABLE `PharmaLoc` (
 	`pharma_id`	INTEGER NOT NULL,
 	`lat`	REAL,
 	`long`	REAL
+);
+CREATE TABLE `PharmaDoc` ( 
+        `name` TEXT NOT NULL, 
+        `address` TEXT NOT NULL, 
+        `phone` REAL NOT NULL, 
+        `fax` REAL, 
+        `manager` TEXT, 
+        `latitude` REAL, 
+        `longitude` REAL 
 );
 CREATE TABLE IF NOT EXISTS "DrugRequests" (
 	`drug_id`	INTEGER NOT NULL,
