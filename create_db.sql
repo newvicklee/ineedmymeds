@@ -19,8 +19,9 @@ CREATE TABLE `PharmaLoc` (
 CREATE TABLE `PharmaDoc` ( 
         `name` TEXT NOT NULL, 
         `address` TEXT NOT NULL, 
-        `phone` REAL NOT NULL, 
-        `fax` REAL, 
+        `phone` INTEGER NOT NULL, 
+        `fax` INTEGER, 
+        `hours` TEXT, 
         `manager` TEXT, 
         `latitude` REAL, 
         `longitude` REAL 

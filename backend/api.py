@@ -37,10 +37,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    return
-
 
 @app.route('/api/v1/search', methods=['GET'])
 @crossdomain(origin='*')
@@ -210,7 +206,7 @@ def set_available():
     if req_newInStock:
         for drug in req_newInStock:
             # TODO: Get pharma_id from JSON
-            pharma_id = 215
+            pharma_id = 214
             now = now_int()
             drug_id = drug['drug_id']
             by_pharmacist = 1
@@ -222,7 +218,7 @@ def set_available():
     if req_noStock:
         for drug in req_noStock:
             # TODO: Get pharma_id from JSON
-            pharma_id = 215
+            pharma_id = 214
             now = now_int()
             drug_id = drug['drug_id']
             by_pharmacist = 1
@@ -319,30 +315,52 @@ def pharmacy_onboarding():
     return str(pharma_id)
 
 
-@app.route('/api/v1/pharmacy/<int:pharma_id>', methods=['GET'])
-def pharmacy_info(pharma_id):
+@app.route('/api/v1/pharmacy/<int:phone>', methods=['GET'])
+@crossdomain(origin='*')
+def pharmacy_info(phone):
     # get DB
     db = get_db()
     cur = db.cursor()
 
     # get pharmacy info
-    doc = json.loads(cur.execute(
-        'SELECT doc FROM PharmaDoc WHERE oid = ?', (pharma_id,)).fetchone()[0])
-    doc['id'] = pharma_id
+    pharmacy = dict()
+    info = cur.execute('SELECT rowid AS pharma_id, * from PharmaDoc where phone = ?', (phone,)).fetchone()
 
+    if info == None:
+        """ If the pharmacy phone number doesn't exist, return an unsuccesful response message """
+        response = dict()
+        response['unsuccessful'] = "Sorry we could not find that pharmacy in our records."
+        return jsonify(response)
+
+    pharmacy['info'] = {
+            'pharma_id': info[0],
+            'name': info[1],
+            'address': info[2],
+            'phone': info[3],
+            'fax': info[4],
+            'manager': info[5],
+            'hours': info[6],
+            'latitude': info[7],
+            'longitude': info[8]
+            }
     # get drug availability
-    cur.execute("""SELECT drug_id
-FROM Availabilities
-WHERE pharma_id = ?
-AND availability = 1
-ORDER BY when_reported
-LIMIT 20""", (pharma_id,))
+    cur.execute("""SELECT Availabilities.drug_id, DrugNames.name
+        FROM Availabilities
+        INNER JOIN DrugNames on Availabilities.drug_id = DrugNames.drug_id
+        WHERE pharma_id = ?
+        AND availability = 1
+        ORDER BY when_reported
+        LIMIT 20""", (pharmacy['info']['pharma_id'],))
     drugs = list()
     for row in cur:
-        drugs.append(row[0])
-    doc['drugs'] = drugs
+        drug = {
+                'drug_id': row[0],
+                'name': row[1]
+                }
+        drugs.append(drug)
+    pharmacy['drugs'] = drugs
 
-    return jsonify(doc)
+    return jsonify(pharmacy)
 
 
 @app.route('/api/v1/drug/<int:drug_id>', methods=['GET'])

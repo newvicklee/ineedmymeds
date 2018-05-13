@@ -400,6 +400,7 @@ body {
     line-height: 2em;
     margin-top: 1.5em;
     color: #657786;
+    padding-left: 0.5em;
 
     width: 35%;
     
@@ -433,13 +434,80 @@ body {
     color: #fff;
 
     &:hover {
-        background-color: #006dbf;
-        border-color: #006dbf;
+        background-color: #3660d8;
+        border-color: #3660d8;
     }
 }
 
 .asterisk-point {
     font-size: 0.8em;
+}
+
+
+.notification-card {
+    font-family: inherit;
+    position: fixed;
+    width: 320px;
+    padding: 0px 1em 1em;
+    z-index: 9998;
+    box-sizing: border-box;
+    height: auto;
+    top: 0px;
+    bottom: auto;
+    margin: 0px auto 0px -10em;
+    left: 50%;
+}
+
+.notification-error {
+    position: relative;
+    width: 100%;
+    cursor: default;
+    border-radius: 2px;
+    font-size: 0.8em;
+    margin: 1em 0px 1em;
+    padding: 1em;
+    display: block;
+    box-sizing: border-box;
+    opacity: 1;
+    transition: all 0.3s ease-in-out 0s;
+    transform: translate3d(0px, 0px, 0px);
+    will-change: transform, opacity;
+    border-top: 2px solid rgb(236, 61, 61);
+    background-color: rgb(244, 233, 233);
+    color: rgb(65, 47, 47);
+    box-shadow: rgba(236, 61, 61, 0.9) 0px 0px 1px;
+    top: 0px;
+    height: 5.5em;
+}
+
+.notification-title {
+    font-size: 14px;
+    margin: 0px 0px 0.3em;
+    padding: 0px;
+    font-weight: bold;
+    color: rgb(236, 61, 61);
+}
+
+.notification-message {
+    margin: 0px;
+    padding: 0px;
+}
+
+.notification-dismiss {
+    font-family: Arial;
+    font-size: 1em;
+    position: absolute;
+    top: 0.4em;
+    right: 0.45em;
+    line-height: 1em;
+    background-color: rgb(228, 190, 190);
+    color: rgb(244, 233, 233);
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
 }
 
 .footer-container {
