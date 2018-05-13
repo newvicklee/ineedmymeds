@@ -6,22 +6,48 @@ class Pharmacy extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            logged_in: true
+            logged_in: false,
+            pharmacy_info: null,
+            pharmacy_drugs: null,
+            drug_requests: null
 
         };
+
+        this.handleLogin = this.handleLogin.bind(this);
     };
+
+    handleLogin(pharmacy_info, pharmacy_drugs) {
+        this.setState(function () {
+            return {
+                logged_in: true,
+                pharmacy_info: pharmacy_info,
+                pharmacy_drugs: pharmacy_drugs
+            }
+        });
+    };
+
+
 
     render() {
         let logged_in = this.state.logged_in;
+        let pharmacy_info = this.state.pharmacy_info;
+        let pharmacy_drugs = this.state.pharmacy_drugs;
         return (
             <div className="container-flex">
                 <div className="content-container">
                     {!logged_in &&
-                        <Login />}
+                        <Login 
+                            logged_in={logged_in}
+                            handleLogin={this.handleLogin}
+                            />}
                     {logged_in &&
-                        <Welcome />}
+                        <Welcome 
+                            pharmacy_info={pharmacy_info}
+                            />}
                     {logged_in &&
-                        <DrugsStock />}
+                        <DrugStock 
+                            pharmacy_drugs={pharmacy_drugs}
+                            />}
 
                 </div>
             </div>
@@ -29,31 +55,96 @@ class Pharmacy extends React.Component {
     };
 };
 
+function Notification (props) {
+    let error = props.error_msg;
+    return (
+        <div className="notification-container">
+            <div className="notification-card">
+                <div className="notification-error">
+                    <h4 className="notification-title">{error}</h4>
+                    <div className="notification-message"></div>
+                    {/* TODO: Implement notification-dismiss control 
+                        <span className="notification-dismiss">x</span>*/}
+                </div>
+            </div>
+        </div>
+    )
+};
+        
+            
+
+
 class Login extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            phone: null,
+            error: null
+        };
+
+        this.handleLogin = this.handleLogin.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    };
+
+    handleChange(event) {
+        let phone = event.target.value;
+        this.setState(function () {
+            return { phone: phone }
+        });
+    };
+
+    handleLogin(event) {
+        event.preventDefault();
+        self = this;
+        let phone = this.state.phone;
+        api.logIn(phone)
+            .then(function (response) {
+                if (response.data.unsuccessful) {
+                    self.setState(function () {
+                        return {
+                            error: response.data.unsuccessful
+                        }
+                    });
+                } else {
+                    self.setState(function () {
+                        return { error: null }
+                    });
+                    let pharmacy_info = response.data.info;
+                    let pharmacy_drugs = response.data.drugs;
+                    self.props.handleLogin(pharmacy_info, pharmacy_drugs);
+                };
+            });
     };
 
     render() {
+        let handleChange = this.handleChange;
+        let error = this.state.error;
         return (
                 <div className="login-container">
                     <div className="postCard verticalCard fullWidthCard">
-                        <h2 className="login-title">Login with your Pharmacy phone number*</h2>
+                        <h2 className="login-title">Log in with your Pharmacy phone number*</h2>
                         <p className="asterisk-point">* Numbers only, no spaces or dashes</p>
-                        <input className="login-input" autocomplete="off" placeholder="Phone Number" type="text" />
-                        <button className="submit-button btn-blue" type="submit">Login</button>
+                        <input className="login-input" autoComplete="off" placeholder="Phone Number" type="text" onChange={this.handleChange}/>
+                        <button className="submit-button btn-blue" type="submit" onClick={this.handleLogin}>Login</button>
                     </div>
+                    {error &&
+                    <Notification 
+                        error_msg={error}
+                        />}
                 </div>
         )
     };
 };
 
 function Welcome (props) {
+    let name = props.pharmacy_info.name;
+    let address = props.pharmacy_info.address;
+    let phone = props.pharmacy_info.phone;
     return (
             <div className="column-container welcome-container">
-                <h1>Welcome Nazs Pharmacy</h1>
-                <p>6410 Main Street Vancouver, BC</p>
-                <p>6043253241</p>
+                <h1>{name}</h1>
+                <p>{address}</p>
+                <p>{phone}</p>
             </div>
     )
 };
@@ -80,14 +171,14 @@ function DrugCheckbox (props) {
         )
 };
 
-class DrugsStock extends React.Component {
+class DrugStock extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             inStock: [],
             newInStock: [],
             noStock: [],
-            drugRequests: []
+            drugRequests: [],
         };
 
         this.createDrugCheckbox = this.createDrugCheckbox.bind(this);
@@ -97,12 +188,24 @@ class DrugsStock extends React.Component {
     };
 
     componentDidMount() {
+        /* Initializes the drugRequests and inStock state. 
+         *
+         *      Adds the default in_stock propery to each drug. 
+         *
+         */
+        let inStock = this.props.pharmacy_drugs;
+        let updatedInStock = this.addInStockState(inStock, true);
+
+            
+
+
         api.drugRequests()
            .then(function (drugRequests) {
-               let updatedDrugRequests = this.addInStockState(drugRequests.data);
+               let updatedDrugRequests = this.addInStockState(drugRequests.data, false);
                this.setState(function() {
                    return {
-                       drugRequests: updatedDrugRequests
+                       drugRequests: updatedDrugRequests,
+                       inStock: updatedInStock
                    }
                });
            }.bind(this));
@@ -156,7 +259,7 @@ class DrugsStock extends React.Component {
                 inStock: inStock,
                 drugRequests: drugRequests, 
                 noStock: noStock
-            }, function() { return console.log(this.state);});
+            });
         };
         if (drugRequests[index].in_stock == true) {
             /* If user clicks a checkbox, 
@@ -173,7 +276,7 @@ class DrugsStock extends React.Component {
                 inStock: inStock,
                 drugRequests: drugRequests, 
                 noStock: noStock
-            }, function() { return console.log(this.state);});
+            });
         };
        
     };
@@ -199,16 +302,16 @@ class DrugsStock extends React.Component {
                 />;
     };
 
-    addInStockState(drugRequests) {
+    addInStockState(drugRequests, trueOrFalse) {
         /*
-         * Adds the in_stock property for each drug in drugRequests, sets the default in_stock to false
+         * Adds the in_stock property for each drug in drugRequests
          *
          * @param {array of objects} drugRequests is the array that is returned from api.drugRequests()
          *
-         * @returns {array of objects} Returns drugRequests but each drug object has a new property in_stock that defaults to false
+         * @returns {array of objects} Returns drugRequests but each drug object has a new property in_stock 
          */
         drugRequests.map(function (drug) {
-            drug.in_stock = false;
+            drug.in_stock = trueOrFalse;
         });
         return drugRequests;
     };
@@ -217,7 +320,9 @@ class DrugsStock extends React.Component {
 
     render() {
         let createDrugCheckbox = this.createDrugCheckbox;
-        let drugCheckboxes = this.state.drugRequests.map(createDrugCheckbox);
+        let drugRequests = this.state.drugRequests.map(createDrugCheckbox);
+        let drugsInStock = this.state.inStock.map(createDrugCheckbox);
+        let drugCheckboxes = [].concat(drugsInStock, drugRequests);
         let handleSubmit = this.handleSubmit;
         return (
             <div>
