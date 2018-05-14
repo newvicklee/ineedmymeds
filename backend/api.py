@@ -200,13 +200,13 @@ def set_available():
     req_data = request.get_json()['data']
     req_newInStock = req_data.get('newInStock')
     req_noStock = req_data.get('noStock')
+    req_pharmaId = req_data.get('pharma_id')
 
     # Initialize newInStock
     newInStock = []
     if req_newInStock:
         for drug in req_newInStock:
-            # TODO: Get pharma_id from JSON
-            pharma_id = 214
+            pharma_id = req_pharmaId
             now = now_int()
             drug_id = drug['drug_id']
             by_pharmacist = 1
@@ -217,8 +217,7 @@ def set_available():
     noStock = []
     if req_noStock:
         for drug in req_noStock:
-            # TODO: Get pharma_id from JSON
-            pharma_id = 214
+            pharma_id = req_pharmaId
             now = now_int()
             drug_id = drug['drug_id']
             by_pharmacist = 1
@@ -230,9 +229,21 @@ def set_available():
     cur = db.cursor()
 
     if newInStock:
-        cur.executemany('INSERT INTO Availabilities VALUES(?,?,?,?,?)', newInStock)
+        """ For drugs that are new in stock, first check if the drug record already exists in the Availabilities table. If it exists, do not do anything. If it doesn't exist, insert a new record
+        """
+        for drug in newInStock:
+            # Check if the row exists first
+            data = cur.execute('''SELECT EXISTS(SELECT 1 FROM Availabilities WHERE pharma_id = ? AND drug_id = ?)''', (drug[0], drug[1])).fetchone()[0]
+            if data is 1:
+                # There is already a record, so update the availability to 1
+                cur.execute('''UPDATE Availabilities SET availability = 1 WHERE pharma_id = ? AND drug_id = ?''', (drug[0], drug[1]))
+            if data is 0:
+                # The record doesn't exist, so add a new record
+                cur.execute('''INSERT INTO Availabilities VALUES(?,?,?,?,?)''', drug)
 
     if noStock:
+        """ For drugs that are not stocked by the pharmacy anymore, update the availability to 0
+        """
         for drug in noStock:
             sql = '''UPDATE Availabilities SET availability = 0, when_reported = ?, by_pharmacist = ?
                     WHERE pharma_id = ? AND drug_id = ?'''
@@ -242,17 +253,10 @@ def set_available():
                 print("An error occured:", error.args[0])
 
     db.commit()
-    
-    
-    """
-    # set availability
-    now = now_int()
-    cur.execute('INSERT INTO Availabilities VALUES(?,?,?,?,?)',
-                (pharma_id, drug_id, availability, now, by_pharmacist))
-    db.commit()
-    """
+   
+    successMsg = "Successfully updated your records."
 
-    return ""
+    return jsonify({ 'successMsg': successMsg })
 
 
 @app.route('/api/v1/drug', methods=['POST'])
@@ -329,7 +333,7 @@ def pharmacy_info(phone):
     if info == None:
         """ If the pharmacy phone number doesn't exist, return an unsuccesful response message """
         response = dict()
-        response['unsuccessful'] = "Sorry we could not find that pharmacy in our records."
+        response['errorMsg'] = "Sorry we could not find that pharmacy in our records."
         return jsonify(response)
 
     pharmacy['info'] = {
