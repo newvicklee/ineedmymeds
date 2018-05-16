@@ -390,9 +390,11 @@ class DrugStock extends React.Component {
                 <div className="column-container width-full align-left">
                     <h2>What do you have in stock?</h2>
                 </div>
-                <div className="post">
-                    <div className="postCard width-full drug-checkboxes">
-                        {drugCheckboxes}
+                <div className="post-container">
+                    <div className="post">
+                        <div className="postCard width-full drug-checkboxes">
+                            {drugCheckboxes}
+                        </div>
                     </div>
                 </div>
                 <div className="column-container width-full">
