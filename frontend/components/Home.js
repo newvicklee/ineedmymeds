@@ -1,6 +1,7 @@
 const React = require('react');
 const Link = require('react-router-dom').Link;
 const api = require('../utils/api');
+import bottle_pills from '../imgs/bottle_pills.png';
 
 
 class Home extends React.Component {
@@ -43,7 +44,7 @@ class Home extends React.Component {
          *
          */
         let newPharmacyInfo;
-        if (response.data.pharmacies === undefined) {
+        if (response.data.unavailableAtPharmacies == true) {
             newPharmacyInfo = null;
         } else {
             newPharmacyInfo = response.data.pharmacies;
@@ -62,6 +63,7 @@ class Home extends React.Component {
         let submitted = this.state.submitted;
         let drugIsKnown = this.state.drugIsKnown;
         let otherDrugs = this.state.otherDrugs;
+        let pharmacyInfo = this.state.pharmacyInfo;
         return (
             <div className="container-flex">
                 <div className="content-container">
@@ -77,7 +79,11 @@ class Home extends React.Component {
                             onSubmit={this.handleSubmit}
                             searchText={this.state.searchText}
                         />}
-                    {drugIsKnown &&
+                    {drugIsKnown && !pharmacyInfo &&
+                        <Unavailable
+                            searchText={this.state.searchText}
+                            />}
+                    {drugIsKnown && pharmacyInfo &&
                         <Card
                             pharmacyInfo={this.state.pharmacyInfo}
                             searchText={this.state.searchText}
@@ -188,6 +194,18 @@ class OtherDrugs extends React.Component {
     };
 }
 
+function Unavailable (props) {
+    let searchText = props.searchText;
+    return (
+        <div className="post-container">
+            <h2 className="match-found">Sorry, none of the pharmacies in our records have <span className="badge badge--medName">{searchText}</span> at the moment. </h2>
+            <p className="asterisk-point">* We sent a request to the pharmacies. Try checking back tomorrow. </p>
+        </div>
+
+
+    )
+};
+
 
 class CardRow extends React.Component {
     render () {
@@ -204,17 +222,20 @@ class CardRow extends React.Component {
                             <div className="postName">{pharmacyName}</div>
                             <div className="postStreetAdress">{pharmacyAddress}</div>
                             <div className="postPhone">{pharmacyPhone}</div>
-                            <div className="postHours">Hours: </div>
+                            {/* TODO: Implement hours in database
+                                <div className="postHours">Hours: </div> */}
                         </div>
                         <div className="postRating">
-                            <i className="fas fa-thumbs-up fa-2x"></i>
-                            <div className="postRatingNum">{pharmacyRating}</div>
-                        </div>
+                            <span className="navbar-logo"><img className="card-logo" src={bottle_pills}/></span>
+                            {/* TODO: Implement voting function 
+                            <div className="postRatingNum">{pharmacyRating}</div> */}
+                        </div> 
                     </div>
+                    {/* TODO: Implement voting function
                     <div className="postThumbs">
                         <a href="#" className="rate-thumbs-up" title="Thumbs Up"><i className="far fa-thumbs-up fa-3x thumbs"></i></a>
                         <a href="#" className="rate-thumbs-down" title="Thumbs Down"><i className="far fa-thumbs-down fa-3x"></i></a>
-                    </div>
+                    </div> */}
                 </div>
         )
     };
