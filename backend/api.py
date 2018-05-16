@@ -90,6 +90,7 @@ def search():
                               key=lambda tup: -1 * tup[1])
 
     result = {'known': found}
+
     if found:
         drug_id = exact_row[0]
         result['drug-id'] = drug_id
@@ -105,37 +106,44 @@ def search():
 
         # fetch availability
         pharmacies = list()
+        # TODO: Order pharmacies by distance
+        """
         for row in cur.execute(
-        """SELECT pharma_id, (lat - ?) * (lat - ?) + (long - ?) * (long - ?) AS distance
+        '''SELECT pharma_id, (lat - ?) * (lat - ?) + (long - ?) * (long - ?) AS distance
         FROM PharmaLoc
         ORDER BY distance ASC
-        LIMIT 10""", (loc_lat, loc_lat, loc_long, loc_long)):
+        LIMIT 10''', (loc_lat, loc_lat, loc_long, loc_long)):
+            pharma_id = row[0]
+            pharmacies.append({'id': pharma_id})
+        """
+
+        for row in cur.execute(
+                ''' SELECT pharma_id, availability, when_reported
+                    FROM Availabilities
+                    WHERE drug_id = ? AND availability = 1
+                    ORDER BY when_reported ''', (drug_id,)):
             pharma_id = row[0]
             pharmacies.append({'id': pharma_id})
 
-        for idx in range(len(pharmacies)):
-            pharma_id = pharmacies[idx]['id']
-            doc = json.loads(cur.execute(
-                'SELECT doc FROM PharmaDoc WHERE oid = ?',
-                (pharma_id,)).fetchone()[0])
-            doc['id'] = pharma_id
-            pharmacies[idx] = doc
+        for index in range(len(pharmacies)):
+            pharma_id = pharmacies[index]['id']
+            pharmacy = cur.execute('SELECT *, rowid FROM PharmaDoc WHERE rowid = ?', (pharma_id,)).fetchone()
+            pharmacies[index] = {
+                    'name': pharmacy[0],
+                    'address': pharmacy[1],
+                    'phone': pharmacy[2],
+                    'fax': pharmacy[3],
+                    'manager': pharmacy[4],
+                    'hours': pharmacy[5],
+                    'latitude': pharmacy[6],
+                    'longitude': pharmacy[7],
+                    'pharma_id': pharmacy[8]
+                    }
 
-            cur.execute(
-                """SELECT availability, when_reported, by_pharmacist
-FROM Availabilities
-WHERE pharma_id = ?
-AND drug_id = ?
-ORDER BY when_reported""", (pharma_id, drug_id))
-            row = cur.fetchone()
-            if row is None:
-                pharmacies[idx]['available'] = 'unknown'
-            else:
-                if row[0]:
-                    pharmacies[idx]['available'] = 'yes'
-                else:
-                    pharmacies[idx]['available'] = 'no'
 
+        if not pharmacies:
+            #If pharmacies list is empty, there are no pharmacies that have the medication
+            result['unavailableAtPharmacies'] = True
         result['pharmacies'] = pharmacies
 
     variants = []
