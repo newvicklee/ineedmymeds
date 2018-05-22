@@ -39,7 +39,7 @@ def index():
 
 
 @app.route('/api/v1/search', methods=['GET'])
-@crossdomain(origin='*')
+@crossdomain(origin=app.config['CROSSDOMAIN_ORIGIN'])
 def search():
     """ Fetches pharmacy information for a specific medication
 
@@ -202,7 +202,7 @@ ORDER BY when_reported""", (pharma_id, drug_id))
 
 
 @app.route('/api/v1/set-available', methods=['GET', 'POST', 'OPTIONS'])
-@crossdomain(origin='*', headers='content-type')
+@crossdomain(origin=app.config['CROSSDOMAIN_ORIGIN'], headers='content-type')
 def set_available():
     # get JSON post data
     req_data = request.get_json()['data']
@@ -328,7 +328,7 @@ def pharmacy_onboarding():
 
 
 @app.route('/api/v1/pharmacy/<int:phone>', methods=['GET'])
-@crossdomain(origin='*')
+@crossdomain(origin=app.config['CROSSDOMAIN_ORIGIN'])
 def pharmacy_info(phone):
     # get DB
     db = get_db()
@@ -396,7 +396,7 @@ LIMIT 1""", (drug_id,)).fetchone()
 
 
 @app.route('/api/v1/drug/requested', methods=['GET'])
-@crossdomain(origin='*')
+@crossdomain(origin=app.config['CROSSDOMAIN_ORIGIN'])
 def drugs_requested():
     # get DB
     db = get_db()

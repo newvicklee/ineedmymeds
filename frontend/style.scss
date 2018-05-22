@@ -29,6 +29,21 @@ body {
     height: 100%;
 }
 
+.github-          corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:           rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-     arm{animation:octocat-wave 560ms ease-in-out}}
+.octo-arm {
+    transform-origin: 130px 106px;
+}
+.github-corner {
+    svg {
+        fill: #151513; 
+        color: #fff; 
+        position: absolute; 
+        top: 0; 
+        border: 0; 
+        right: 0;
+    }
+}
+
 
 .container-flex {
     display: flex;
@@ -66,7 +81,11 @@ body {
     }
 }
 
-.login {
+.menu-login {
+    @media (max-width: $tablet) {
+        margin-right: 4.5em;
+    }
+
 }
 
 .content-container {
@@ -136,7 +155,6 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-left: 1em;
 
     flex: 0 1 80%;
     
@@ -145,6 +163,8 @@ body {
     &:hover {
         box-shadow: 0 0 4px 0 rgba(46,62,72,.12),0 4px 12px 0 rgba(46,62,72,.12);
     }
+
+
 
 }
 

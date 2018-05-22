@@ -9,9 +9,7 @@ function Nav () {
             <NavLink exact to='/' className="navbar-brand">
                 <span className="navbar-logo"><img className="logo" src={logo}/></span>
             </NavLink>
-            <div>
-                <NavLink to='/pharmacy' className="login">Pharmacy &rarr; Log In</NavLink>
-            </div>
+            <NavLink to='/pharmacy' className="menu-login">Log In</NavLink>
         </div>
     </nav>
   )
