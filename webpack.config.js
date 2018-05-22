@@ -6,7 +6,7 @@ module.exports = {
       './frontend/index.js'
   ],  
   output: {
-      path: path.resolve(__dirname, '/frontend/dist'),
+      path: path.resolve(__dirname, 'frontend/dist'),
       filename: '[name].bundle.js',
   },  
   devServer: {

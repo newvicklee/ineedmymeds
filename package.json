@@ -4,7 +4,7 @@
   "description": "Crowd sourced app to find medications",
   "scripts": {
     "start": "webpack-dev-server --config ./webpack.config.js --mode development",
-    "build": "webpack --mode development --config webpack.config.js"
+    "build": "webpack --mode production --config webpack.config.js"
   },
   "author": "Newvick Lee",
   "license": "MIT",

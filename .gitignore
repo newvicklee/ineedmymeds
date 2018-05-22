@@ -1,7 +1,9 @@
 venv/
 __pycache__
 node_modules/
+frontend/dist/
 *~
 *.pyc
 ineedmy.db
 config.py
+logging/
